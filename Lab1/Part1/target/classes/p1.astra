@@ -1,0 +1,37 @@
+agent p1 {
+
+    module System system;
+    module Console console;
+
+    types ls {
+        formula switch(string, string);
+        formula light(string, string);
+    }
+
+    // initialising switch and light
+    initial switch("s1", "on");
+    initial light("l1", "off");
+
+    // if switched on and light off, turn light on
+    rule +switch("s1", "on") : light("l1", "off") {
+        -light("l1", "off");
+        +light("l1", "on");
+    }
+
+    // if switched off and light on, turn light off
+    rule +switch("s1", "off") : light("l1", "on") {
+        -light("l1" ,"on");
+        +light("l1" ,"off");
+    }
+
+    rule +light(string Lt, string St) {
+        console.println("Light " + Lt + " is in state: " + St);
+    }    
+    
+    rule +!main(list args) {
+        +switch("s1", "on"); // switch on
+        system.sleep(1000);
+        system.exit();
+    }
+
+}

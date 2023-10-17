@@ -1,0 +1,56 @@
+agent two_lights {
+
+    module Console console;
+    module System system;
+
+    types ls {
+        formula switch(string, string);
+        formula light(string, string);
+    }
+
+    initial switch("s1", "on");
+    initial light("l1", "on");
+    initial light("l2", "off");
+
+    // both lights off to on
+    rule +switch("s1", "on") : light("l1", "off") & light("l2", "off"){
+        -light("l1", "off");+light("l1", "on");
+        -light("l2", "off");+light("l2", "on");
+    }
+
+    // both lights on to off
+    rule +switch("s1", "off") : light("l1", "on") & light("l2", "on"){
+        -light("l1" ,"on");+light("l1" ,"off");
+        -light("l2", "on");+light("l2", "off");
+    }
+
+    // l1 off to on
+    rule +switch("s1", "on") : light("l1", "off") & light("l2", "on"){
+        -light("l1" ,"off");+light("l1" ,"on");
+    }
+
+    // l2 off to on
+    rule +switch("s1", "on") : light("l1", "on") & light("l2", "off"){
+        -light("l2", "off");+light("l2", "on");
+    }
+
+    // l1 on to off
+    rule +switch("s1", "off") : light("l1", "on") & light("l2", "off"){
+        -light("l1", "on");+light("l1", "off");
+    }
+
+    // l2 on to off
+    rule +switch("s1", "off") : light("l1", "off") & light("l2", "on"){
+        -light("l2" ,"on");+light("l2" ,"off");
+    }
+
+    rule +light(string Lt, string St) {
+        console.println("Light " + Lt + " is in state: " + St);
+    }
+
+    rule +!main(list args) {
+        system.sleep(1000);
+        system.exit();
+    }
+    
+}

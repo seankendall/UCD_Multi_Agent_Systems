@@ -1,0 +1,59 @@
+agent flasher {
+
+    module System system;
+    module Console console;
+
+    types ls {
+        formula switch(string, string);
+        formula light(string, string);
+    }
+    
+    // initialising switch and light
+    initial switch("s1", "off");
+    initial light("l1", "off");
+
+    // if switched on and light off, turn light on
+    rule +switch("s1", "on") : light("l1", "off") {
+        -light("l1", "off");
+        +light("l1", "on");
+    }
+
+    // if switched off and light on, turn light off
+    rule +switch("s1", "off") : light("l1", "on") {
+        -light("l1" ,"on");
+        +light("l1" ,"off");
+    }
+
+    rule +light(string Lt, string St) {
+        console.println("Light " + Lt + " is in state: " + St);
+    }
+    
+    // if switch is on turn it off
+    rule +!flipSwitch() : switch("s1", "on") {
+        -switch("s1", "on");
+        +switch("s1", "off");
+    }
+
+    // if switch is off turn it on
+    rule +!flipSwitch() : switch("s1", "off") {
+        -switch("s1", "off");
+        +switch("s1", "on");
+    }
+
+    // flashes the light 10 times (5 on, 5 off), not including the first output which is the initial state
+    // when flash is greater than 1 
+    rule +!flash(int X) : X > 0{
+        !flipSwitch(); // flip the switch
+        system.sleep(500); // pause between swtich
+        !flash(X-1);    // X-1 and call flash again
+    }
+
+     // when flash is 0 end
+    rule +!flash(int X) : X == 0{}
+    
+    rule +!main(list args) {
+        !flash(10); // flash the light 10 times
+        system.exit();
+    }
+
+}

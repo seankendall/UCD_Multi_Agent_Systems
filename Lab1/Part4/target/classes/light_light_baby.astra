@@ -1,0 +1,21 @@
+agent light_light_baby {
+
+    module Console console;
+    module System system;
+
+    rule +!main(list args) {
+        !!day_simulation(0);
+    }
+
+    initial hour_light(0, 1), hour_light(1, 1), hour_light(2, 1), hour_light(3, 1), hour_light(4, 1), hour_light(5, 1),hour_light(6, 100), hour_light(7, 250), hour_light(8, 400), hour_light(9, 800), hour_light(10, 1000), hour_light(11, 1000);
+    initial hour_light(12, 1000), hour_light(13, 1000), hour_light(14, 1000), hour_light(15, 800), hour_light(16, 700), hour_light(18, 600), hour_light(19, 400), hour_light(20, 100), hour_light(21, 100), hour_light(22, 1), hour_light(23, 1), hour_light(11, 1000);
+
+    // rule +!day_simulation(24) : {}
+
+    rule +!day_simulation(int hour) : hour_light(hour, int lux) {
+        -+light_level(lux);
+        System.sleep(1000);
+        !day_simulation(hour+1);
+    }
+
+}
